@@ -1,0 +1,40 @@
+version: '3'
+services:
+  db:
+    image: postgres
+
+  api:
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && gunicorn -c /config/gunicorn.conf.py src.wsgi"
+    depends_on:
+      - db
+    volumes:
+      - ./src:/src
+      - ./config:/config
+    links:
+      - redis
+    expose:
+      - "8000"
+
+  proxy:
+    image: nginx
+    ports:
+      - "9999:9999"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/conf.d/nginx.conf
+    depends_on:
+      - api
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+
+  celery:
+    build: .
+    command: celery worker --app=app.tasks
+    volumes:
+      - ./src:/src
+    links:
+      - db
+      - redis
