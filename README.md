@@ -3,8 +3,8 @@
 ## Quickstart
 
 ```bash
-$ git clone git@github.com:anshengme/docker-deploy-django-example.git
-$ cd docker-deploy-django-example
+$ git clone git@github.com:anshengme/docker-deploy-django.git
+$ cd docker-deploy-django
 $ docker-compose up
 ```
 
